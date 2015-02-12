@@ -170,8 +170,12 @@ module Heroku::Command
     def get_status
       resource = authenticated_resource("/status/#{@ranger_app_id}?api_key=#{@ranger_api_key}")
 
-      @current_status = MultiJson.load(resource.get)
-      true
+      begin
+        @current_status = MultiJson.load(resource.get)
+        true
+      rescue MultiJson::ParseError => e
+        false
+      end
     end
 
     def get_dependencies
